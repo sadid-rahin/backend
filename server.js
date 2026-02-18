@@ -8,20 +8,18 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// 🛡️ SECURE GOOGLE PROXY
-// This endpoint hides your Google Script URL from the browser
+// 🛡️ THE SHIELD: Forwards data exactly as it receives it
 app.all("/sync-google", async (req, res) => {
   try {
     const response = await axios({
       method: req.method,
-      url: process.env.GOOGLE_SCRIPT_URL, // Loads from .env
-      data: req.body,
+      url: process.env.GOOGLE_SCRIPT_URL,
+      data: req.body, // This sends your exact Guest_name, Pickup, etc.
       params: req.query
     });
     res.json(response.data);
   } catch (error) {
-    console.error("Database Proxy Error:", error.message);
-    res.status(500).json({ error: "Secure Database Sync Failed" });
+    res.status(500).json({ error: "Sync failed" });
   }
 });
 
@@ -40,4 +38,4 @@ app.post("/create-payment-intent", async (req, res) => {
 });
 
 const PORT = process.env.PORT || 4242;
-app.listen(PORT, () => console.log(`Secure Backend running on port ${PORT}`));
+app.listen(PORT, () => console.log(`Backend running on ${PORT}`));
