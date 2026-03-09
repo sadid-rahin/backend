@@ -51,7 +51,7 @@ app.all("/sync-google", async (req, res) => {
   }
 });
 
-// 💳 THE PAYMENT ENGINE: Combined and fixed
+// 💳 THE PAYMENT ENGINE: Updated to fix the AED Payment Method Error
 app.post("/create-payment-intent", async (req, res) => {
   const { amount, metadata } = req.body; 
   try {
@@ -60,7 +60,8 @@ app.post("/create-payment-intent", async (req, res) => {
       amount: Math.round(amount * 100), // Convert to fils
       currency: "aed",
       metadata: metadata || {}, 
-      automatic_payment_methods: { enabled: true },
+      // Changed to explicitly include card payments for AED compatibility
+      payment_method_types: ['card'], 
     });
     
     res.send({ clientSecret: paymentIntent.client_secret });
